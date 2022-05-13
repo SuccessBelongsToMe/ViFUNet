@@ -41,7 +41,7 @@ def train_net(net,
     train_loss = []
 
     # (Initialize logging)
-    experiment = wandb.init(project='DF-Net-Win!', resume='allow', anonymous='must')
+    experiment = wandb.init(project='Flash-Net-Win!', resume='allow', anonymous='must')
     experiment.config.update(dict(epochs=epochs, batch_size=batch_size, learning_rate=learning_rate,
                                   val_percent=val_percent, save_checkpoint=save_checkpoint, img_scale=img_scale,
                                   amp=amp))

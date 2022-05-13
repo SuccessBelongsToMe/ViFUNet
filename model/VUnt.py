@@ -3,8 +3,6 @@ import torch.nn as nn
 import torch
 from torch import Tensor, autograd, dropout
 from torchvision.ops.deform_conv import DeformConv2d
-from modulated_deform_conv import *
-# from vit import ViT
 from .vit import ViT
 
 class DoubleConv(nn.Module):
@@ -22,34 +20,7 @@ class DoubleConv(nn.Module):
     def forward(self, input):
         return self.conv(input)
 
-class DoubleDFConv(nn.Module):
-    def __init__(self, in_ch, out_ch):
-        super(DoubleDFConv, self).__init__()
-        self.conv = nn.Sequential(
-            DeformConv(in_ch, out_ch),
-            nn.BatchNorm2d(out_ch),
-            nn.ReLU(inplace=True),
-            DeformConv(out_ch, out_ch),
-            nn.BatchNorm2d(out_ch),
-            nn.ReLU(inplace=True)
-        )
- 
-    def forward(self, input):
-        return self.conv(input)
-# 可变形卷积
-class DeformConv(nn.Module):
-    def __init__(self, in_channels, out_channels):
-        super().__init__()
-        self.offset1=nn.Conv2d(in_channels,2*3*3,kernel_size=3,padding=1)
-        self.DConv1=DeformConv2d(in_channels, out_channels, kernel_size=3, padding=1)
 
-# 前向传播，上一层的输出是下一层的输入
-    def forward(self, x):
-        # 获取偏置项1
-        offset1=self.offset1(x)
-        # 进行一次可变形卷积
-        d_x1=self.DConv1(x,offset1)
-        return d_x1
 
  
  
@@ -114,26 +85,7 @@ class VUnet(nn.Module):
         c10=self.conv10(c9)
         out = nn.Softmax(dim=1)(c10)
         return out
-
-
-class UnetTo3D(nn.Module):
-  def __init__(self,in_ch,out_ch):
-      super(UnetTo3D, self).__init__()
-      self.unet=VUnet(in_ch,out_ch)
-  def forward(self,x):   
-    y = self.unet(x[:,:,0,:,:])
-    y=y.unsqueeze(2)
-    for i in range(1,x.shape[2],1):
-      # print(i)
-      # print(x[:,:,i,:,:].shape)
-      result = self.unet(x[:,:,i,:,:])
-      result = result.unsqueeze(2)
-      # print(result.shape)
-      y=torch.cat([y,result],dim=2)
-      # print(y.shape)
-    return y
     
-      
 if __name__ == '__main__':
     model = VUnet(1, 2)
     total = sum([param.nelement() for param in model.parameters()])

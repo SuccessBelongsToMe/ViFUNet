@@ -20,7 +20,6 @@ from utils.loss_function import *
 import numpy as np
 import pandas as pd
 from train.train_part import train_net
-from flashUnet import FlashUnet
 from transUnet import VisionTransformer
 # from unetsuccessful import *
 # from transUnet import TransUnet
@@ -63,9 +62,7 @@ if __name__ == '__main__':
     net  = FLASHUnet(1,2)
     # net = ResNet([3,4,6,3],1,2)
     # net = SegNet(1,2)
-    # net = ResNet34UnetPlusFLASH(1,2)
     # net = FCN32s(in_class=1,n_class=2)
-    # net.load_from(weights=np.load('R50+ViT-B_16.npz'))
     print(net)
 
     # net  = FLASHUnet(1,2)
